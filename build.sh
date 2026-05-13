@@ -10,3 +10,6 @@ python manage.py collectstatic --no-input
 
 echo "Aplicando migraciones a la base de datos..."
 python manage.py migrate
+
+echo "Creando superusuario..."
+python manage.py createsuperuser --noinput || true
