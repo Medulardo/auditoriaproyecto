@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Confirmar Eliminación</h1>
+
+<p>¿Estás seguro de que quieres eliminar el curso <strong>{{ object.nivel }} {{ object.letra }} ({{ object.anio
+        }})</strong>?</p>
+<p>Todos los alumnos asignados a este curso quedarán "Sin curso".</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" style="background-color: red; color: white;">Sí, Eliminar</button>
+    <a href="{% url 'curso-detail' object.pk %}">Cancelar</a>
+</form>
+{% endblock %}

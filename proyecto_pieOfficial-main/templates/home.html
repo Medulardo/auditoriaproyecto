@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Inicio - Proyecto PIE{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="card bg-primary text-white border-0 overflow-hidden"
+      style="background: linear-gradient(135deg, var(--primary-color) 0%, #001A57 100%);">
+      <div class="card-body p-4 p-lg-5 position-relative">
+        <div class="position-relative z-1">
+          <h1 class="display-5 fw-bold mb-2">Bienvenido al Sistema PIE</h1>
+          <p class="lead mb-0 opacity-75">
+            Hola, <strong>{{ user.profesional.nombre_completo|default:user.username }}</strong>.
+            Gestiona tus estudiantes, informes y actividades desde un solo lugar.
+          </p>
+        </div>
+        <img src="{% static 'gestion_pie/img/ministerioEducacion.jpg' %}" alt="Mineduc"
+          class="position-absolute end-0 bottom-0 opacity-25"
+          style="height: 110%; width: auto; transform: translate(10%, 10%); mix-blend-mode: overlay; padding-right: 2%;">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Stats Row -->
+<div class="row g-4 mb-4">
+  <!-- Cursos -->
+  <div class="col-12 col-md-6 col-xl-4">
+    <div class="card h-100">
+      <div class="card-body d-flex align-items-center gap-4">
+        <div class="rounded-3 bg-primary-subtle p-3 text-primary">
+          <i class="bi bi-collection fs-3"></i>
+        </div>
+        <div>
+          <h6 class="text-muted text-uppercase mb-1" style="font-size: 0.75rem; letter-spacing: 0.05em;">Cursos
+            Registrados</h6>
+          <h2 class="mb-0 fw-bold">{{ total_cursos|default:0 }}</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estudiantes -->
+  <div class="col-12 col-md-6 col-xl-4">
+    <div class="card h-100">
+      <div class="card-body d-flex align-items-center gap-4">
+        <div class="rounded-3 bg-danger-subtle p-3 text-danger">
+          <i class="bi bi-people fs-3"></i>
+        </div>
+        <div>
+          <h6 class="text-muted text-uppercase mb-1" style="font-size: 0.75rem; letter-spacing: 0.05em;">Estudiantes PIE
+          </h6>
+          <h2 class="mb-0 fw-bold">{{ total_estudiantes|default:0 }}</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="col-12 col-xl-4">
+    <div class="card h-100">
+      <div class="card-header bg-transparent border-0 pb-0 pt-4">
+        <h5 class="card-title mb-0">Accesos Rápidos</h5>
+      </div>
+      <div class="card-body d-grid gap-2">
+        <a href="{% url 'estudiante-list' %}" class="btn btn-outline-primary text-start">
+          <i class="bi bi-people me-2"></i> Gestionar Estudiantes
+        </a>
+        <a href="{% url 'curso-list' %}" class="btn btn-outline-danger text-start">
+          <i class="bi bi-collection me-2"></i> Ver Cursos
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Reports Section -->
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header bg-transparent border-0 pt-4 pb-2">
+        <h5 class="card-title mb-0 text-primary">Últimos Informes PIE</h5>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="bg-light">
+              <tr>
+                <th class="ps-4">Estudiante</th>
+                <th>Profesional</th>
+                <th>Fecha</th>
+                <th class="text-end pe-4">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for informe in ultimos_informes %}
+              <tr>
+                <td class="ps-4">
+                  <div class="fw-semibold">{{ informe.estudiante.nombres }} {{ informe.estudiante.apellidos }}</div>
+                  <div class="small text-muted">{{ informe.estudiante.run }}</div>
+                </td>
+                <td>
+                  <div>{{ informe.profesional.nombre_completo }}</div>
+                  <div class="small text-muted">{{ informe.profesional.especialidad }}</div>
+                </td>
+                <td>{{ informe.fecha_creacion|date:"d/m/Y" }}</td>
+                <td class="text-end pe-4">
+                  <a href="{% url 'informe-pie-detail' informe.pk %}" class="btn btn-sm btn-outline-primary">
+                    Ver Informe
+                  </a>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="4" class="text-center py-4 text-muted">
+                  No hay informes recientes.
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tips Section -->
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-lightbulb text-warning"></i>
+          <span class="mb-0">Sugerencias y Tips</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="row g-4">
+          <div class="col-md-4">
+            <div class="d-flex gap-3">
+              <div class="text-primary"><i class="bi bi-1-circle-fill fs-4"></i></div>
+              <div>
+                <h6 class="fw-bold">Gestión de Cursos</h6>
+                <p class="text-muted small mb-0">Asegúrate de crear todos los cursos y niveles antes de ingresar
+                  estudiantes al sistema.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="d-flex gap-3">
+              <div class="text-danger"><i class="bi bi-2-circle-fill fs-4"></i></div>
+              <div>
+                <h6 class="fw-bold">Informes PIE</h6>
+                <p class="text-muted small mb-0">Puedes generar y descargar informes en formato Word directamente desde
+                  la ficha del estudiante.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="d-flex gap-3">
+              <div class="text-primary"><i class="bi bi-3-circle-fill fs-4"></i></div>
+              <div>
+                <h6 class="fw-bold">Colaboración</h6>
+                <p class="text-muted small mb-0">Invita a otros profesionales a colaborar en los informes registrando
+                  sus actividades.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
