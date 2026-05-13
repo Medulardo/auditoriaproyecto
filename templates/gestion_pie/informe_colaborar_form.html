@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container" style="max-width:720px">
+  <h1 class="h4 mb-3">Sumarme como colaborador</h1>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <form method="post" novalidate>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <div class="mb-3">
+          <label class="form-label" for="{{ form.rol.id_for_label }}">Rol en el informe</label>
+          {{ form.rol }}
+          {% if form.rol.errors %}
+            <div class="text-danger small">{{ form.rol.errors|join:", " }}</div>
+          {% endif %}
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="{{ form.resumen_aporte.id_for_label }}">Resumen del aporte (opcional)</label>
+          {{ form.resumen_aporte }}
+          {% if form.resumen_aporte.errors %}
+            <div class="text-danger small">{{ form.resumen_aporte.errors|join:", " }}</div>
+          {% endif %}
+        </div>
+
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary">Guardar</button>
+          <a href="{% url 'informe-pie-detail' informe.pk %}" class="btn btn-outline-secondary">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

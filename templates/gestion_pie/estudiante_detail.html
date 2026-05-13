@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <a href="{% url 'estudiante-list' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Volver al listado
+        </a>
+        
+        <div>
+            {% if estudiante.es_pie %}
+                <a href="{% url 'informe-pie-create' estudiante.pk %}" class="btn btn-success me-2">
+                    <i class="bi bi-file-earmark-text"></i> Generar Informe PIE
+                </a>
+            {% endif %}
+            <a href="{% url 'estudiante-update' estudiante.pk %}" class="btn btn-warning me-2">
+                <i class="bi bi-pencil-fill"></i> Editar Ficha
+            </a>
+            <a href="{% url 'estudiante-delete' estudiante.pk %}" class="btn btn-danger">
+                <i class="bi bi-trash-fill"></i> Eliminar Estudiante
+            </a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header">
+            <h1 class="h3 mb-0">Ficha de Estudiante</h1>
+        </div>
+        <div class="card-body">
+            <h2 class="card-title h4">{{ estudiante.nombres }} {{ estudiante.apellidos }}</h2>
+            <p class="mb-2"><strong>RUN:</strong> {{ estudiante.run }}</p>
+            <p class="mb-0"><strong>Curso:</strong> {{ estudiante.curso|default:"Sin curso" }}</p>
+            
+            {% if estudiante.es_pie %}
+              <div class="alert alert-success mt-3" role="alert">
+                  <i class="bi bi-check-circle-fill"></i> Estudiante del Programa de Integración Escolar (PIE)
+              </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <h3 class="mb-3">Historial de Formularios y Documentos</h3>
+    
+    <div class="accordion" id="historialAccordion">
+    
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingAnamnesis">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAnamnesis">
+                    Anamnesis (Formulario Único)
+                </button>
+            </h2>
+            <div id="collapseAnamnesis" class="accordion-collapse collapse" data-bs-parent="#historialAccordion">
+                <div class="accordion-body">
+                    {% if estudiante.anamnesis %}
+                        <p>
+                            <span class="badge bg-success">Completada</span> el {{ estudiante.anamnesis.fecha_entrevista }}.
+                            <a href="#" class="btn btn-sm btn-outline-primary ms-2">Ver/Editar</a>
+                        </p>
+                    {% else %}
+                        <p>
+                           <span class="badge bg-warning text-dark">Pendiente</span>
+                           <a href="#" class="btn btn-sm btn-primary ms-2">Completar Ahora</a>
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingAutorizacion">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAutorizacion">
+                    Autorización de Evaluación
+                </button>
+            </h2>
+            <div id="collapseAutorizacion" class="accordion-collapse collapse" data-bs-parent="#historialAccordion">
+                <div class="accordion-body">
+                    {% if estudiante.autorizacion %}
+                        <p>
+                            Formulario del {{ estudiante.autorizacion.fecha_autorizacion }}.
+                            <strong>Estado: 
+                            {% if estudiante.autorizacion.da_consentimiento %}
+                                <span class="badge bg-success">Autorizado</span>
+                            {% else %}
+                                <span class="badge bg-danger">Rechazado</span>
+                            {% endif %}
+                            </strong>
+                        </p>
+                    {% else %}
+                        <p>
+                            <span class="badge bg-warning text-dark">Pendiente</span>
+                            <a href="#" class="btn btn-sm btn-primary ms-2">Registrar</a>
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingSalud">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSalud">
+                    Evaluaciones de Salud
+                </button>
+            </h2>
+            <div id="collapseSalud" class="accordion-collapse collapse" data-bs-parent="#historialAccordion">
+                <div class="accordion-body">
+                    <ul class="list-group list-group-flush">
+                        {% for eval in estudiante.evaluaciones_salud.all %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>Evaluación del {{ eval.fecha_evaluacion }} por Dr(a). {{ eval.medico_nombre }}.</span>
+                                <a href="#" class="btn btn-sm btn-outline-secondary">Ver detalle</a>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item">No hay evaluaciones de salud registradas.</li>
+                        {% endfor %}
+                    </ul>
+                    <a href="#" class="btn btn-primary mt-3"><i class="bi bi-plus-lg"></i> Agregar Evaluación de Salud</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingInformesPIE">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseInformesPIE">
+                    Informes PIE Profesionales
+                </button>
+            </h2>
+            <div id="collapseInformesPIE" class="accordion-collapse collapse" data-bs-parent="#historialAccordion">
+                <div class="accordion-body">
+                     <ul class="list-group list-group-flush">
+                        {% for informe in estudiante.informes_pie.all %}
+                             <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>
+                                    Informe del {{ informe.periodo_inicio }} al {{ informe.periodo_fin }}
+                                </span>
+                                <a href="{% url 'informe-pie-detail' informe.pk %}" class="btn btn-sm btn-outline-info">
+                                    <i class="bi bi-eye-fill"></i> Ver Informe
+                                </a>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item">No hay informes profesionales registrados.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingFamilia">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFamilia">
+                    Informes a la Familia
+                </button>
+            </h2>
+            <div id="collapseFamilia" class="accordion-collapse collapse" data-bs-parent="#historialAccordion">
+                <div class="accordion-body">
+                     <ul class="list-group list-group-flush">
+                        {% for informe in estudiante.informes_familia.all %}
+                             <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>Informe entregado el {{ informe.fecha_entrega }} a {{ informe.receptor_nombre }}.</span>
+                                <a href="#" class="btn btn-sm btn-outline-secondary">Ver detalle</a>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item">No hay informes a la familia registrados.</li>
+                        {% endfor %}
+                    </ul>
+                    <a href="#" class="btn btn-primary mt-3"><i class="bi bi-plus-lg"></i> Agregar Informe a Familia</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingPAI">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePAI">
+                    Planes de Apoyo Individual (PAI)
+                </button>
+            </h2>
+            <div id="collapsePAI" class="accordion-collapse collapse" data-bs-parent="#historialAccordion">
+                <div class="accordion-body">
+                    <ul class="list-group list-group-flush">
+                        {% for pai in estudiante.planes_apoyo.all %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>PAI del curso {{ pai.registro_pie_curso.curso }}.</span>
+                                <a href="#" class="btn btn-sm btn-outline-secondary">Ver detalle</a>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item">No hay Planes de Apoyo Individual registrados.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div> {% endblock %}
